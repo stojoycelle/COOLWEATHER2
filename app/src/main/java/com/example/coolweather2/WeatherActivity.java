@@ -1,5 +1,6 @@
 package com.example.coolweather2;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.gesture.GestureLibraries;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ScrollingView;
+import android.support.v4.widget.AutoScrollHelper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.coolweather2.gson.Forecast;
 import com.example.coolweather2.gson.Weather;
+import com.example.coolweather2.service.AutoUpdateService;
 import com.example.coolweather2.util.HttpUtil;
 import com.example.coolweather2.util.Utility;
 
@@ -61,7 +64,7 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView carWashText;
 
     private TextView sportText;
-    
+
     private ImageView bingPicImg;
 
     @Override
@@ -73,7 +76,7 @@ public class WeatherActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_weather);
-        bingPicImg=(ImageView)findViewById(R.id.bing_pic_img); 
+        bingPicImg=(ImageView)findViewById(R.id.bing_pic_img);
         weatherLayout=(ScrollView)findViewById(R.id.weather_layout);
         titleCity=(TextView)findViewById(R.id.title_city);
         titleUpdateTime=(TextView)findViewById(R.id.title_update_time);
@@ -144,10 +147,9 @@ public class WeatherActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
-    void requestWeather(String weatherId) {
+    public void requestWeather(String weatherId) {
         String weatherUrl="http://guolin.tech/api/weather?cityid="+weatherId+"&key=d63902b2d44740aea2c29e4fed941de6";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
@@ -175,6 +177,7 @@ public class WeatherActivity extends AppCompatActivity {
                             editor.putString("weather",responseText);
                             editor.apply();
                             showWeatherInfo(weather);
+
                         }else {
                             Toast.makeText(WeatherActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
                         }
@@ -218,5 +221,7 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText.setText(carWash);
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
+        Intent intent=new Intent(this, AutoUpdateService.class);
+        startService(intent);
     }
 }

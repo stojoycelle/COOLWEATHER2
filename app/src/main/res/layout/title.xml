@@ -9,7 +9,7 @@
         android:layout_height="30dp"
         android:layout_marginLeft="10dp"
         android:layout_alignParentLeft="true"
-        android:background="@drawable/ic_launcher"/>
+        android:background="@mipmap/main"/>
 
     <TextView
         android:id="@+id/title_city"
